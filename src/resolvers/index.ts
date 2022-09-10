@@ -6,8 +6,8 @@ export default {
   Query: {
     item: (_: unknown, input: { id: string }, context: any) => {
       // auth inside resolver
-      auth.isAuthenticated(context);
-      auth.isAuthorized(context, "ADMIN");
+      //auth.isAuthenticated(context);
+      //auth.isAuthorized(context, "ADMIN");
       return item(_, input, context);
     },
     getAllItems,

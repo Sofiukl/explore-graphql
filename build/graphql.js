@@ -29,7 +29,7 @@ const schemaWithShield = (0, graphql_middleware_1.applyMiddleware)((0, schema_1.
 const server = new apollo_server_lambda_1.ApolloServer({
     // typeDefs: schema,
     // resolvers,
-    // schema: schemaWithDirective,
+    //schema: schemaWithDirective, // schema for auth using directive
     schema: schemaWithShield,
     csrfPrevention: true,
     cache: "bounded",

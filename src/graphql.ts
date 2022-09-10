@@ -31,7 +31,7 @@ const schemaWithShield = applyMiddleware(
 const server = new ApolloServer({
   // typeDefs: schema,
   // resolvers,
-  // schema: schemaWithDirective, // schema for auth using directive
+  //schema: schemaWithDirective, // schema for auth using directive
   schema: schemaWithShield, // auth using graphQL Shield library (i.e GraphQL middleware)
   csrfPrevention: true,
   cache: "bounded",
