@@ -1,0 +1,50 @@
+service: serverless-graphql-api-example
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  versionFunctions: false
+  region: us-east-1
+  environment:
+    ITEM_TABLE: "serverless-graphql-api-example-dev-ItemsTable"
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - { "Fn::GetAtt": ["ItemsTable", "Arn"] }
+  apiGateway:
+    shouldStartNameWithService: true
+
+functions:
+  graphql:
+    handler: build/graphql.handler
+    events:
+      - http:
+          path: graphql
+          method: any
+          cors: true
+
+resources:
+  Resources:
+    ItemsTable:
+      Type: "AWS::DynamoDB::Table"
+      Properties:
+        TableName: "serverless-graphql-api-example-dev-ItemsTable"
+        AttributeDefinitions:
+          - AttributeName: itemId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: itemId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+plugins:
+  - serverless-offline

@@ -1,0 +1,34 @@
+directive @auth(requires: Role = ADMIN) on OBJECT | FIELD_DEFINITION
+
+enum Role {
+  ADMIN
+  REVIEWER
+  USER
+  UNKNOWN
+}
+
+type User {
+  id: ID!
+  email: String!
+  token: String!
+  username: String!
+  createdAt: String!
+  role: String!
+}
+
+type Query {
+  item(id: ID!): Item @auth(requires: ADMIN)
+  getAllItems: [Item]
+}
+
+type Mutation {
+  login(username: String!, password: String!): User!
+  createItem(content: String!): Item
+  updateItem(id: ID!, content: String): Item
+  deleteItem(id: ID!): Boolean
+}
+
+type Item {
+  id: ID!
+  content: String
+}
