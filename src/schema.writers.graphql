@@ -1,0 +1,8 @@
+type Writer {
+  id: ID!
+  writerEmail: String
+}
+
+type Query {
+  writerById(id: ID!): Writer
+}

@@ -48,14 +48,33 @@ export type MutationUpdateItemArgs = {
   id: Scalars['ID'];
 };
 
+export type Post = {
+  __typename?: 'Post';
+  id: Scalars['ID'];
+  text?: Maybe<Scalars['String']>;
+  writerId: Scalars['ID'];
+};
+
 export type Query = {
   __typename?: 'Query';
   getAllItems?: Maybe<Array<Maybe<Item>>>;
   item?: Maybe<Item>;
+  postsByWriterId: Array<Maybe<Post>>;
+  writerById?: Maybe<Writer>;
 };
 
 
 export type QueryItemArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryPostsByWriterIdArgs = {
+  writerId: Scalars['ID'];
+};
+
+
+export type QueryWriterByIdArgs = {
   id: Scalars['ID'];
 };
 
@@ -74,4 +93,10 @@ export type User = {
   role: Scalars['String'];
   token: Scalars['String'];
   username: Scalars['String'];
+};
+
+export type Writer = {
+  __typename?: 'Writer';
+  id: Scalars['ID'];
+  writerEmail?: Maybe<Scalars['String']>;
 };

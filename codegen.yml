@@ -1,5 +1,10 @@
 overwrite: true
-schema: "src/schema.graphql"
+schema:
+  [
+    "src/schema.graphql",
+    "src/schema.writers.graphql",
+    "src/schema.post.graphql",
+  ]
 documents: null
 generates:
   src/generated/schema.ts:
