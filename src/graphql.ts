@@ -7,6 +7,10 @@ import { authDirective } from "./directives/auth.directive";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { applyMiddleware } from "graphql-middleware";
 import { permissions } from "./resolvers/permission";
+import { stitchSchemas } from "@graphql-tools/stitch";
+import { postsByWriterId } from "./resolvers/posts";
+import { writerById } from "./resolvers/writers";
+import { delegateToSchema } from "@graphql-tools/delegate";
 
 // get the GraphQL schema
 const schema = fs.readFileSync("./src/schema.graphql", "utf8");
@@ -28,11 +32,81 @@ const schemaWithShield = applyMiddleware(
   permissions
 );
 
+// Schema Stitching example
+let postsSchemaStr = fs.readFileSync("./src/schema.post.graphql", "utf8");
+let authorsSchemaStr = fs.readFileSync("./src/schema.writers.graphql", "utf8");
+let extendedPostAuthorSchema = fs.readFileSync(
+  "./src/schema.post.writers.graphql",
+  "utf8"
+);
+
+let postsSchema = makeExecutableSchema({
+  typeDefs: [postsSchemaStr],
+  resolvers: {
+    Query: {
+      postsByWriterId,
+    },
+  },
+});
+
+let authorsSchema = makeExecutableSchema({
+  typeDefs: [authorsSchemaStr],
+  resolvers: {
+    Query: {
+      writerById,
+    },
+  },
+});
+
+// setup sub schema configurations
+export const postsSubSchema = { schema: postsSchema };
+export const authorsSubSchema = { schema: authorsSchema };
+
+// build the combined schema
+// For details documentation link: https://www.graphql-tools.com/docs/schema-stitching/stitch-schema-extensions
+export const gatewaySchema = stitchSchemas({
+  subschemas: [postsSubSchema, authorsSubSchema],
+  typeDefs: extendedPostAuthorSchema,
+  resolvers: {
+    Writer: {
+      posts: {
+        selectionSet: `{ id }`,
+        resolve(writer, args, context, info) {
+          return delegateToSchema({
+            schema: postsSubSchema,
+            operation: "query",
+            fieldName: "postsByWriterId",
+            args: { writerId: writer.id },
+            context,
+            info,
+          });
+        },
+      },
+    },
+    Post: {
+      writer: {
+        selectionSet: `{ writerId }`,
+        resolve(post, args, context, info) {
+          return delegateToSchema({
+            schema: authorsSubSchema,
+            operation: "query",
+            fieldName: "writerById",
+            args: { id: post.writerId },
+            context,
+            info,
+          });
+        },
+      },
+    },
+  },
+});
+
 const server = new ApolloServer({
   // typeDefs: schema,
   // resolvers,
-  //schema: schemaWithDirective, // schema for auth using directive
-  schema: schemaWithShield, // auth using graphQL Shield library (i.e GraphQL middleware)
+  // schema: schemaWithDirective, // schema for auth using directive
+  // schema: schemaWithShield, // auth using graphQL Shield library (i.e GraphQL middleware)
+  schema: gatewaySchema, // schema stitching
   csrfPrevention: true,
   cache: "bounded",
   context: ({ event, context, express }) => {
