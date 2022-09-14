@@ -10,6 +10,14 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  Upload: any;
+};
+
+export type File = {
+  __typename?: 'File';
+  encoding: Scalars['String'];
+  filename: Scalars['String'];
+  mimetype: Scalars['String'];
 };
 
 export type Item = {
@@ -23,6 +31,7 @@ export type Mutation = {
   createItem?: Maybe<Item>;
   deleteItem?: Maybe<Scalars['Boolean']>;
   login: User;
+  singleUpload: File;
   updateItem?: Maybe<Item>;
 };
 
@@ -40,6 +49,11 @@ export type MutationDeleteItemArgs = {
 export type MutationLoginArgs = {
   password: Scalars['String'];
   username: Scalars['String'];
+};
+
+
+export type MutationSingleUploadArgs = {
+  file?: InputMaybe<Scalars['Upload']>;
 };
 
 

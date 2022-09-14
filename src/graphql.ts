@@ -11,7 +11,7 @@ import { stitchSchemas } from "@graphql-tools/stitch";
 import { postsByWriterId } from "./resolvers/posts";
 import { writerById } from "./resolvers/writers";
 import { delegateToSchema } from "@graphql-tools/delegate";
-
+const { graphqlUploadExpress } = require("graphql-upload");
 // get the GraphQL schema
 const schema = fs.readFileSync("./src/schema.graphql", "utf8");
 
@@ -102,11 +102,11 @@ export const gatewaySchema = stitchSchemas({
 });
 
 const server = new ApolloServer({
-  // typeDefs: schema,
-  // resolvers,
+  typeDefs: schema,
+  resolvers,
   // schema: schemaWithDirective, // schema for auth using directive
   // schema: schemaWithShield, // auth using graphQL Shield library (i.e GraphQL middleware)
-  schema: gatewaySchema, // schema stitching
+  // schema: gatewaySchema, // schema stitching
   csrfPrevention: true,
   cache: "bounded",
   context: ({ event, context, express }) => {
@@ -130,6 +130,7 @@ exports.handler = server.createHandler({
   expressAppFromMiddleware(middleware) {
     const app = express();
     app.use(exampleMiddleware);
+    app.use(graphqlUploadExpress());
     app.use(middleware);
     return app;
   },
