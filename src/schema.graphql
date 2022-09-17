@@ -1,4 +1,5 @@
 directive @auth(requires: Role = ADMIN) on OBJECT | FIELD_DEFINITION
+directive @rest(url: String) on FIELD_DEFINITION
 
 # The implementation for this scalar is provided by the
 # 'GraphQLUpload' export from the 'graphql-upload' package
@@ -27,9 +28,15 @@ type User {
   role: String!
 }
 
+type Fact {
+  fact: String!
+  length: String
+}
+
 type Query {
   item(id: ID!): Item @auth(requires: ADMIN)
   getAllItems: [Item]
+  getFact: Fact! @rest(url: "https://catfact.ninja/fact")
 }
 
 type Mutation {

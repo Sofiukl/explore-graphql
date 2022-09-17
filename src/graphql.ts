@@ -11,9 +11,18 @@ import { stitchSchemas } from "@graphql-tools/stitch";
 import { postsByWriterId } from "./resolvers/posts";
 import { writerById } from "./resolvers/writers";
 import { delegateToSchema } from "@graphql-tools/delegate";
+import { restDirective } from "./directives/rest.directive";
 const { graphqlUploadExpress } = require("graphql-upload");
 // get the GraphQL schema
 const schema = fs.readFileSync("./src/schema.graphql", "utf8");
+
+// Schema for @rest directive
+const { restDirectiveTransformer } = restDirective("rest");
+let schemaWithRestDirective = makeExecutableSchema({
+  typeDefs: [schema],
+  resolvers,
+});
+schemaWithRestDirective = restDirectiveTransformer(schemaWithRestDirective);
 
 // Schema for Auth using directive
 const { authDirectiveTransformer } = authDirective("auth");
@@ -102,9 +111,10 @@ export const gatewaySchema = stitchSchemas({
 });
 
 const server = new ApolloServer({
-  typeDefs: schema,
-  resolvers,
+  // typeDefs: schema,
+  // resolvers,
   // schema: schemaWithDirective, // schema for auth using directive
+  schema: schemaWithRestDirective, // example of @rest directive
   // schema: schemaWithShield, // auth using graphQL Shield library (i.e GraphQL middleware)
   // schema: gatewaySchema, // schema stitching
   csrfPrevention: true,
