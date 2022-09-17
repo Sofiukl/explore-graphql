@@ -13,6 +13,12 @@ export type Scalars = {
   Upload: any;
 };
 
+export type Fact = {
+  __typename?: 'Fact';
+  fact: Scalars['String'];
+  length?: Maybe<Scalars['String']>;
+};
+
 export type File = {
   __typename?: 'File';
   encoding: Scalars['String'];
@@ -72,6 +78,7 @@ export type Post = {
 export type Query = {
   __typename?: 'Query';
   getAllItems?: Maybe<Array<Maybe<Item>>>;
+  getFact: Fact;
   item?: Maybe<Item>;
   postsByWriterId: Array<Maybe<Post>>;
   writerById?: Maybe<Writer>;
