@@ -81,6 +81,7 @@ export type Query = {
   getFact: Fact;
   item?: Maybe<Item>;
   postsByWriterId: Array<Maybe<Post>>;
+  tasks?: Maybe<Array<Maybe<Task>>>;
   writerById?: Maybe<Writer>;
 };
 
@@ -105,6 +106,13 @@ export enum Role {
   Unknown = 'UNKNOWN',
   User = 'USER'
 }
+
+export type Task = {
+  __typename?: 'Task';
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  title?: Maybe<Scalars['String']>;
+};
 
 export type User = {
   __typename?: 'User';

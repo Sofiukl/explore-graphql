@@ -3,6 +3,7 @@ import { item, getAllItems, createItem, deleteItem, updateItem } from "./item";
 import { login } from "./user";
 import auth from "../utils";
 import { singleUpload } from "./file.upload";
+import { tasks } from "./todo";
 
 export default {
   Query: {
@@ -13,6 +14,7 @@ export default {
       return item(_, input, context);
     },
     getAllItems,
+    tasks,
   },
   // This maps the `Upload` scalar to the implementation provided
   // by the `graphql-upload` package.

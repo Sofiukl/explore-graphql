@@ -12,6 +12,7 @@ import { postsByWriterId } from "./resolvers/posts";
 import { writerById } from "./resolvers/writers";
 import { delegateToSchema } from "@graphql-tools/delegate";
 import { restDirective } from "./directives/rest.directive";
+import todoAPI from "./datasources/TodoAPI";
 const { graphqlUploadExpress } = require("graphql-upload");
 // get the GraphQL schema
 const schema = fs.readFileSync("./src/schema.graphql", "utf8");
@@ -131,6 +132,11 @@ const server = new ApolloServer({
       context,
       req: express.req,
       currentUser: user,
+    };
+  },
+  dataSources: () => {
+    return {
+      todoAPI: todoAPI,
     };
   },
 });
