@@ -33,10 +33,17 @@ type Fact {
   length: String
 }
 
+type Task {
+  id: ID!
+  title: String
+  description: String
+}
+
 type Query {
   item(id: ID!): Item @auth(requires: ADMIN)
   getAllItems: [Item]
   getFact: Fact! @rest(url: "https://catfact.ninja/fact")
+  tasks: [Task]
 }
 
 type Mutation {
